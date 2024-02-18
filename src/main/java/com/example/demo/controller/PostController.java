@@ -13,6 +13,8 @@ import com.example.demo.model.Account;
 import com.example.demo.model.Post;
 import com.example.demo.services.AccountService;
 import com.example.demo.services.PostService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -97,9 +99,9 @@ public class PostController {
     }
 
     @GetMapping("/posts/{id}/delete")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String deletePost(@PathVariable Long id) {
-
+    @PreAuthorize("isAuthenticated()")
+    public String deletePost(@PathVariable Long id,Post post1) {
+        System.out.println(post1);
         Optional<Post> optionalPost = pService.findById(id);
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();
