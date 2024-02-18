@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -16,49 +18,49 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-
-
-
 @Controller
 public class PostController {
     @Autowired
     private PostService pService;
-    
+
     @Autowired
     private AccountService aService;
 
     @GetMapping("/posts/{id}")
     public String getPost(@PathVariable Long id, Model model) {
         Optional<Post> oPost = pService.findById(id);
-
-        if(oPost.isPresent()){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("currentUsername", auth.getName());
+        model.addAttribute("isAdmin", auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
+        if (oPost.isPresent()) {
             Post post = oPost.get();
             model.addAttribute("post", post);
             return "post";
-        } else{
+        } else {
             return "404";
         }
-        
+
     }
-    
+
     @GetMapping("/posts/new")
     public String getNewPostPage(Model model) {
         Optional<Account> oAccount = aService.findByEmail("user@domain.com");
-        if(oAccount.isPresent()){
+        if (oAccount.isPresent()) {
             Account account = oAccount.get();
             Post post = new Post();
             post.setAccount(account);
             model.addAttribute("post", post);
             return "newpost";
-        } else{
+        } else {
             return "404";
         }
     }
-    
+
     @PostMapping("/posts/new")
     public String saveNewPost(@ModelAttribute Post post) {
         pService.save(post);
-        
+
         return "redirect:/posts/" + post.getId();
     }
 
@@ -67,7 +69,7 @@ public class PostController {
     public String getPostForEdit(@PathVariable Long id, Model model) {
 
         Optional<Post> optionalPost = pService.findById(id);
-        
+
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();
             model.addAttribute("post", post);
@@ -86,7 +88,7 @@ public class PostController {
             Post existingPost = optionalPost.get();
 
             existingPost.setTitle(post.getTitle());
-            existingPost.setBody(post.getBody()); 
+            existingPost.setBody(post.getBody());
 
             pService.save(existingPost);
         }
@@ -108,7 +110,5 @@ public class PostController {
             return "404";
         }
     }
-    
-    
-    
+
 }

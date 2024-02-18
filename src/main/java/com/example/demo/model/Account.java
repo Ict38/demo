@@ -11,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

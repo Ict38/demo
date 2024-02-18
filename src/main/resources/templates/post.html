@@ -1,24 +1,28 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-<head>
-    <meta charset="UTF-8">
-    <title>Blog :: Post</title>
-</head>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Blog :: Post</title>
+    </head>
+
 <body>
     <div class="container">
         <a th:href="@{'/'}">Home</a>
         <div class="post">
-            <h2  th:text="${post.title}"></h2>
-            <h5 th:text="'Written by ' + ${post.account.firstName} + ' on ' + ${post.createAt} " ></h5>   
-            <h5 th:text="'Updated At' + ${post.updatedAt} " ></h5>   
+            <h2 th:text="${post.title}"></h2>
+            <h5 th:text="'Written by ' + ${post.account.firstName} + ' on ' + ${post.createAt} "></h5>
+            <h5 th:text="'Updated At' + ${post.updatedAt} "></h5>
             <p th:text="${post.body}"></p>
         </div>
         <ul sec:authorize="isAuthenticated()">
-            <li><a th:href="@{'/posts/' + ${post.id} + '/edit'}" > Edit</a></li>
-            <li><a th:href="@{'/posts/' + ${post.id} + '/delete'}" > Delete</a></li>
+            <li th:if="${post.account.email == currentUsername}"><a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
+            </li>
+            <li th:if="${post.account.email == currentUsername or isAdmin}"><a th:href="@{'/posts/' + ${post.id} + '/delete'}">Delete</a></li>
         </ul>
     </div>
 </body>
+
 </html>
