@@ -7,6 +7,6 @@ A Spring boot application using:
 - MVC architecture
 
 ## Feature
-Not login user: Read blog only \\
-login user: Create, Read, Update blog\\
-admin: Create, Read, Update, Delete blog
+- Not login user: Read blog only 
+- login user: Create, Read, Update blog
+- admin: Create, Read, Update, Delete blog
